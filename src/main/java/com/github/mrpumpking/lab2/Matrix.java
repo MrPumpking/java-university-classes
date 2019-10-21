@@ -1,19 +1,23 @@
 package com.github.mrpumpking.lab2;
 
 import java.util.Arrays;
+import java.util.Random;
 import java.util.StringJoiner;
+import java.util.function.BiFunction;
+import java.util.stream.IntStream;
 
 public class Matrix {
   private int rows;
   private int cols;
   private double[] data;
 
-  interface MatrixValueProcessor {
-    public double process(double a, double b);
+  public Matrix(int rows, int cols) {
+    createEmptyMatrix(rows, cols);
   }
 
-  public Matrix(int rows, int cols) {
-    init(rows, cols);
+  public Matrix(Matrix source) {
+    createEmptyMatrix(source.getRows(), source.getCols());
+    copy(source.asArray());
   }
 
   public Matrix(double[][] data) {
@@ -23,35 +27,20 @@ public class Matrix {
       maxRowLength = Math.max(maxRowLength, row.length);
     }
 
-    init(data.length, maxRowLength);
+    createEmptyMatrix(data.length, maxRowLength);
     copy(data);
   }
 
-  private void init(int rows, int cols) {
-    this.rows = rows;
-    this.cols = cols;
-    this.data = new double[rows * cols];
+  public static Matrix random(int rows, int cols) {
+    Matrix matrix = new Matrix(rows, cols);
+    matrix.setData(new Random().doubles(rows * cols).toArray());
+    return matrix;
   }
 
-  public Matrix(Matrix source) {
-    init(source.getRows(), source.getCols());
-    copy(source.asArray());
-  }
-
-  private void copy(double[][] data) {
-    for (int y = 0; y < rows; y++) {
-      for (int x = 0; x < cols; x++) {
-        try {
-          set(y, x, data[y][x]);
-        } catch (IndexOutOfBoundsException ignored) {
-          break;
-        }
-      }
-    }
-  }
-
-  double[] getData() {
-    return data;
+  public static Matrix eye(int n) {
+    Matrix matrix = new Matrix(n, n);
+    IntStream.iterate(0, i -> i + n + 1).limit(n).forEach(index -> matrix.set(index, 1));
+    return matrix;
   }
 
   public double get(int index) {
@@ -121,7 +110,7 @@ public class Matrix {
     cols = newCols;
   }
 
-  Matrix processEachValue(Matrix other, MatrixValueProcessor processor) {
+  Matrix applyToCorrespondingValues(Matrix other, BiFunction<Double, Double, Double> function) {
     if (!Arrays.equals(getShape(), other.getShape())) {
       throw new IllegalArgumentException(
           String.format(
@@ -132,33 +121,32 @@ public class Matrix {
     Matrix result = new Matrix(this);
 
     for (int i = 0; i < data.length; i++) {
-      result.set(i, processor.process(result.get(i), other.get(i)));
+      result.set(i, function.apply(result.get(i), other.get(i)));
     }
 
     return result;
   }
 
-  Matrix processEachValueUsingScalar(double scalar, MatrixValueProcessor processor) {
+  Matrix applyToEachValue(double scalar, BiFunction<Double, Double, Double> processor) {
     Matrix result = new Matrix(this);
-    result.data =
-        Arrays.stream(result.data).map(value -> processor.process(value, scalar)).toArray();
+    result.data = Arrays.stream(result.data).map(value -> processor.apply(value, scalar)).toArray();
     return result;
   }
 
   public Matrix add(double scalar) {
-    return processEachValueUsingScalar(scalar, (a, b) -> a + b);
+    return applyToEachValue(scalar, (a, b) -> a + b);
   }
 
   public Matrix subtract(double scalar) {
-    return processEachValueUsingScalar(scalar, (a, b) -> a - b);
+    return applyToEachValue(scalar, (a, b) -> a - b);
   }
 
   public Matrix multiply(double scalar) {
-    return processEachValueUsingScalar(scalar, (a, b) -> a * b);
+    return applyToEachValue(scalar, (a, b) -> a * b);
   }
 
   public Matrix divide(double scalar) {
-    return processEachValueUsingScalar(scalar, (a, b) -> a / b);
+    return applyToEachValue(scalar, (a, b) -> a / b);
   }
 
   public Matrix minor(int row, int column) {
@@ -176,11 +164,11 @@ public class Matrix {
   }
 
   public Matrix add(Matrix other) {
-    return processEachValue(other, (a, b) -> a + b);
+    return applyToCorrespondingValues(other, (a, b) -> a + b);
   }
 
   public Matrix subtract(Matrix other) {
-    return processEachValue(other, (a, b) -> a - b);
+    return applyToCorrespondingValues(other, (a, b) -> a - b);
   }
 
   public double determinant() {
@@ -275,5 +263,31 @@ public class Matrix {
 
   public double frobenius() {
     return Arrays.stream(data).reduce(0, (sum, value) -> sum + Math.pow(value, 2));
+  }
+
+  double[] getData() {
+    return data;
+  }
+
+  void setData(double[] data) {
+    this.data = data;
+  }
+
+  private void createEmptyMatrix(int rows, int cols) {
+    this.rows = rows;
+    this.cols = cols;
+    this.data = new double[rows * cols];
+  }
+
+  private void copy(double[][] data) {
+    for (int y = 0; y < rows; y++) {
+      for (int x = 0; x < cols; x++) {
+        try {
+          set(y, x, data[y][x]);
+        } catch (IndexOutOfBoundsException ignored) {
+          break;
+        }
+      }
+    }
   }
 }
