@@ -11,6 +11,6 @@ public class Photo implements HTMLElement {
 
   @Override
   public void writeHTML(PrintStream out) {
-    out.printf("<img src=\"%s\" alt=\"CV Photo\" height=\"42\" width=\"42\">", src);
+    out.printf("<img src=\"%s\" alt=\"CV Photo\" height=\"42\" width=\"42\" />", src);
   }
 }

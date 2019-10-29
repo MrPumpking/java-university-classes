@@ -7,7 +7,7 @@ public class Main {
   public static void main(String[] args) {
     System.out.println("These are not the droids you are looking for...");
 
-    Document cv = new Document("Jana Kowalski - CV");
+    Document cv = new Document("Jan Kowalski - CV");
     cv.addPhoto(
         "https://i0.wp.com/www.winhelponline.com/blog/wp-content/uploads/2017/12/user.png?fit=256%2C256&quality=100&ssl=1");
     cv.addSection("Wykształcenie")

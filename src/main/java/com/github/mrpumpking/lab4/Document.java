@@ -42,8 +42,12 @@ public class Document implements HTMLElement {
   @Override
   public void writeHTML(PrintStream out) {
     out.print("<html>");
-    out.printf("<head><title>%s</title></head>", title);
+    out.printf("<head>");
+    out.printf("<title>%s</title>", title);
+    out.printf("<meta charset=\"UTF-8\">");
+    out.printf("</head>");
     out.print("<body>");
+    out.printf("<h1>%s</h1>", title);
     photo.writeHTML(out);
     sections.forEach(section -> section.writeHTML(out));
     out.print("</body>");
