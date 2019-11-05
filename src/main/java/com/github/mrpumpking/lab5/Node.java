@@ -5,22 +5,22 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 public abstract class Node {
-  int sign = 1;
+  Sign sign = Sign.PLUS;
 
   static final DecimalFormat NODE_FORMAT =
       new DecimalFormat("0.#####", new DecimalFormatSymbols(Locale.US));
 
   Node minus() {
-    sign = -1;
+    sign = Sign.MINUS;
     return this;
   }
 
   Node plus() {
-    sign = 1;
+    sign = Sign.PLUS;
     return this;
   }
 
-  int getSign() {
+  Sign getSign() {
     return sign;
   }
 

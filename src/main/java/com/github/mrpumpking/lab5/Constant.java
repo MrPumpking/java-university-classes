@@ -4,17 +4,17 @@ public class Constant extends Node {
   double value;
 
   public Constant(double value) {
-    this.sign = value < 0 ? -1 : 1;
+    this.sign = Sign.parse(value);
     this.value = Math.abs(value);
   }
 
   @Override
   double evaluate() {
-    return sign * value;
+    return sign.getValue() * value;
   }
 
   @Override
   public String toString() {
-    return (sign < 0 ? "-" : "") + NODE_FORMAT.format(value);
+    return sign.getStringValue() + NODE_FORMAT.format(value);
   }
 }
