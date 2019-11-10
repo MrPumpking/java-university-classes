@@ -1,4 +1,4 @@
-package com.github.mrpumpking.lab2;
+package com.github.mrpumpking.lab2_3;
 
 import java.util.Arrays;
 import java.util.Random;

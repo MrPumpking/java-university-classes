@@ -1,27 +1,17 @@
 package com.github.mrpumpking;
 
-import com.github.mrpumpking.lab4.Document;
-import com.github.mrpumpking.lab4.paragraph.ParagraphWithList;
-
 public class Main {
   public static void main(String[] args) {
-    System.out.println("These are not the droids you are looking for...");
+    System.out.println("=== Lab1 Main ===");
+    com.github.mrpumpking.lab1.Main.main(args);
+    System.out.println();
 
-    Document cv = new Document("Jan Kowalski - CV");
-    cv.addPhoto(
-        "https://i0.wp.com/www.winhelponline.com/blog/wp-content/uploads/2017/12/user.png?fit=256%2C256&quality=100&ssl=1");
-    cv.addSection("Wykształcenie")
-        .addParagraph("2000-2005 Przedszkole im. Królewny Snieżki w ...")
-        .addParagraph("2006-2012 SP7 im Ronalda Regana w ...")
-        .addParagraph("...");
-    cv.addSection("Umiejętności")
-        .addParagraph(
-            new ParagraphWithList()
-                .setContent("Umiejętności")
-                .addListItem("C")
-                .addListItem("C++")
-                .addListItem("Java"));
+    System.out.println("=== Lab4 Main ===");
+    com.github.mrpumpking.lab4.Main.main(args);
+    System.out.println();
 
-    cv.writeHTML(System.out);
+    System.out.println("=== Lab5 Main ===");
+    com.github.mrpumpking.lab5.Main.main(args);
+    System.out.println();
   }
 }

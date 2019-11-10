@@ -1,4 +1,4 @@
-package com.github.mrpumpking.lab2;
+package com.github.mrpumpking.lab2_3;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
