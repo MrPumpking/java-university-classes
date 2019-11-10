@@ -7,8 +7,9 @@ import java.util.Locale;
 public abstract class Node {
   Sign sign = Sign.PLUS;
 
+  static final double NODE_ZERO_PRECISION = 1e-10;
   static final DecimalFormat NODE_FORMAT =
-      new DecimalFormat("0.#####", new DecimalFormatSymbols(Locale.US));
+      new DecimalFormat("#.#####", new DecimalFormatSymbols(Locale.US));
 
   Node minus() {
     sign = Sign.MINUS;
@@ -25,6 +26,10 @@ public abstract class Node {
   }
 
   abstract double evaluate();
+
+  abstract Node diff(Variable variable);
+
+  abstract boolean isDiffZero(Variable variable);
 
   int getArgumentsCount() {
     return 0;

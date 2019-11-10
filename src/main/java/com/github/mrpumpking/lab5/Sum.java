@@ -4,33 +4,37 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 public class Sum extends Node {
-  private List<Node> args;
+  private List<Node> args = new ArrayList<>();
 
-  public Sum(Node... elements) {
-    this.args = new ArrayList<>();
-    this.add(elements);
+  public Sum() {}
+
+  public Sum(Node... nodes) {
+    this.add(nodes);
   }
 
-  public Sum add(Node... node) {
-    args.addAll(Arrays.asList(node));
+  public Sum(double... constants) {
+    this.add(constants);
+  }
+
+  public Sum(double constant, Node node) {
+    this.add(constant, node);
+  }
+
+  public Sum add(Node... nodes) {
+    args.addAll(Arrays.asList(nodes));
     return this;
   }
 
   public Sum add(double... constants) {
-    Arrays.stream(constants).forEach(value -> args.add(new Constant(value)));
+    args.addAll(Arrays.stream(constants).mapToObj(Constant::new).collect(Collectors.toList()));
     return this;
   }
 
-  /**
-   * TODO: implement multiplication
-   *
-   * @param constant
-   * @param node
-   */
   public Sum add(double constant, Node node) {
-    Node multiply = null;
+    args.add(new Prod(constant, node));
     return this;
   }
 
@@ -45,7 +49,25 @@ public class Sum extends Node {
   }
 
   @Override
+  Node diff(Variable variable) {
+    return new Sum(
+        args.stream()
+            .filter(node -> !node.isDiffZero(variable))
+            .map(node -> node.diff(variable))
+            .toArray(Node[]::new));
+  }
+
+  @Override
+  boolean isDiffZero(Variable variable) {
+    return args.stream().allMatch(node -> node.isDiffZero(variable));
+  }
+
+  @Override
   public String toString() {
+    if (args.size() == 0) {
+      return new Constant(0).toString();
+    }
+
     StringBuilder builder = new StringBuilder("");
 
     if (sign == Sign.MINUS) {
@@ -53,8 +75,10 @@ public class Sum extends Node {
       builder.append("(");
     }
 
-    StringJoiner joiner = new StringJoiner("+");
-    args.forEach(node -> joiner.add(node.toString()));
+    StringJoiner joiner = new StringJoiner(" + ");
+    args.stream()
+        .filter(node -> !node.toString().equals("0") && !node.toString().isEmpty())
+        .forEach(node -> joiner.add(node.toString()));
     builder.append(joiner.toString());
 
     if (sign == Sign.MINUS) {

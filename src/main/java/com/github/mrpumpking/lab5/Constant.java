@@ -14,7 +14,30 @@ public class Constant extends Node {
   }
 
   @Override
+  Node diff(Variable variable) {
+    return new Constant(0);
+  }
+
+  @Override
+  boolean isDiffZero(Variable variable) {
+    return true;
+  }
+
+  @Override
   public String toString() {
-    return sign.getStringValue() + NODE_FORMAT.format(value);
+    StringBuilder builder = new StringBuilder("");
+
+    if (sign == Sign.MINUS) {
+      builder.append("(");
+      builder.append(sign.getStringValue());
+    }
+
+    builder.append(NODE_FORMAT.format(value));
+
+    if (sign == Sign.MINUS) {
+      builder.append(")");
+    }
+
+    return builder.toString();
   }
 }

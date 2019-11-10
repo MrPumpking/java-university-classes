@@ -20,6 +20,18 @@ public class Power extends Node {
   }
 
   @Override
+  Node diff(Variable variable) {
+    Prod result = new Prod(sign.getValue() * exponent, new Power(base, exponent - 1));
+    result.multiply(base.diff(variable));
+    return result;
+  }
+
+  @Override
+  boolean isDiffZero(Variable variable) {
+    return false;
+  }
+
+  @Override
   public String toString() {
     StringBuilder builder = new StringBuilder("");
     boolean useParentheses = (sign == Sign.MINUS || base.getArgumentsCount() > 0);
@@ -37,7 +49,7 @@ public class Power extends Node {
     }
 
     builder.append("^");
-    builder.append(exponent);
+    builder.append(NODE_FORMAT.format(exponent));
 
     return builder.toString();
   }
