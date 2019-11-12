@@ -43,6 +43,35 @@ public class Matrix {
     return matrix;
   }
 
+  /** Sprawdzian 12.11.2019 | Groupa F */
+  public Matrix getSubmatrix(int fromRow, int toRow, int fromCol, int toCol) {
+    if (fromRow < 0 || toRow > getRows()) {
+      throw new IllegalArgumentException(
+          String.format("Wiersze muszą zawierać się w [0-%d]", getRows()));
+    }
+
+    if (fromCol < 0 || toCol > getCols()) {
+      throw new IllegalArgumentException(
+          String.format("Kolumny muszą zawierać się w [0-%d]", getCols()));
+    }
+
+    if (fromRow > toRow || fromCol > toCol) {
+      throw new IllegalArgumentException(
+          "Argumenty \"from\" nie mogą być większe od argumentów \"to\"");
+    }
+
+    Matrix result = new Matrix(toRow - fromRow, toCol - fromCol);
+
+    for (int row = fromRow; row < toRow; row++) {
+      for (int column = fromCol; column < toCol; column++) {
+        double value = get(row, column);
+        result.set(row - fromRow, column - fromCol, value);
+      }
+    }
+
+    return result;
+  }
+
   public double get(int index) {
     return data[index];
   }
