@@ -17,5 +17,9 @@ public class Main {
     System.out.println("=== Lab5 Main ===");
     com.github.mrpumpking.lab5.Main.main(args);
     System.out.println();
+
+    System.out.println("=== Lab6 Main ===");
+    com.github.mrpumpking.lab6.Main.main(args);
+    System.out.println();
   }
 }
