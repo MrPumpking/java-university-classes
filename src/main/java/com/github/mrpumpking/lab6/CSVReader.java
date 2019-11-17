@@ -5,6 +5,7 @@ import com.github.mrpumpking.lab6.exceptions.ColumnNotFoundException;
 import com.google.inject.internal.util.Lists;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -22,6 +23,7 @@ public class CSVReader implements Closeable {
   private Map<String, Integer> columnLabelToIndex;
 
   private static final String DEFAULT_DELIMITER = ",";
+  private static final String DEFAULT_ENCODING = "UTF-8";
   private static final String DEFAULT_TIME_FORMAT = "HH:mm:ss";
   private static final String DEFAULT_DATE_FORMAT = "dd.MM.yyyy";
   private static final String DEFAULT_DATE_TIME_FORMAT =
@@ -29,15 +31,23 @@ public class CSVReader implements Closeable {
   private static final String SPLIT_REGEX = "%s(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
 
   public CSVReader(String filePath) throws IOException {
-    this(filePath, DEFAULT_DELIMITER, false);
+    this(filePath, DEFAULT_DELIMITER, false, DEFAULT_ENCODING);
   }
 
   public CSVReader(String filePath, String delimiter) throws IOException {
-    this(filePath, delimiter, false);
+    this(filePath, delimiter, false, DEFAULT_ENCODING);
   }
 
   public CSVReader(String filePath, String delimiter, boolean hasHeader) throws IOException {
-    this(new FileReader(filePath), delimiter, hasHeader);
+    this(filePath, delimiter, hasHeader, DEFAULT_ENCODING);
+  }
+
+  public CSVReader(String filePath, String delimiter, boolean hasHeader, String encoding)
+      throws IOException {
+    this(
+        new InputStreamReader(new FileInputStream(filePath), Charset.forName(encoding)),
+        delimiter,
+        hasHeader);
   }
 
   public CSVReader(Reader reader, String delimiter, boolean hasHeader) throws IOException {

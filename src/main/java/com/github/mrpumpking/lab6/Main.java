@@ -18,6 +18,7 @@ public class Main {
 
       System.out.println(reader.getColumnLabels());
       System.out.println(reader.get("nazwisko"));
+      System.out.println(reader.get("imię"));
 
     } catch (IOException e) {
       e.printStackTrace();
