@@ -78,10 +78,6 @@ public class CSVReader implements Closeable {
     return current[columnLabelToIndex.get(column)];
   }
 
-  public void close() throws IOException {
-    reader.close();
-  }
-
   public int getInt(int index) throws ColumnIndexOutOfBounds {
     return Integer.parseInt(get(index));
   }
@@ -180,6 +176,11 @@ public class CSVReader implements Closeable {
 
   public boolean hasHeader() {
     return hasHeader;
+  }
+
+  @Override
+  public void close() throws IOException {
+    reader.close();
   }
 
   private String buildDelimiterRegex(String delimiter) {
