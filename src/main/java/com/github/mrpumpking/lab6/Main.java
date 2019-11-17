@@ -13,8 +13,7 @@ public class Main {
   public Main() {
     String filePath = getClass().getResource("/with-header.csv").getPath();
 
-    try {
-      CSVReader reader = new CSVReader(filePath, ";", true);
+    try (CSVReader reader = new CSVReader(filePath, ";", true)) {
       reader.next();
 
       System.out.println(reader.getColumnLabels());

@@ -4,10 +4,7 @@ import com.github.mrpumpking.lab6.exceptions.ColumnIndexOutOfBounds;
 import com.github.mrpumpking.lab6.exceptions.ColumnNotFoundException;
 import com.google.inject.internal.util.Lists;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -16,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CSVReader {
+public class CSVReader implements Closeable {
   private String delimiter;
   private String[] current;
   private int currentLength;
