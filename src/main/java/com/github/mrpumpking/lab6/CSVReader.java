@@ -1,6 +1,6 @@
 package com.github.mrpumpking.lab6;
 
-import com.github.mrpumpking.lab6.exceptions.ColumnIndexOutOfBounds;
+import com.github.mrpumpking.lab6.exceptions.ColumnIndexOutOfBoundsException;
 import com.github.mrpumpking.lab6.exceptions.ColumnNotFoundException;
 import com.google.inject.internal.util.Lists;
 
@@ -73,12 +73,16 @@ public class CSVReader implements Closeable {
     return true;
   }
 
-  public String get(int index) throws ColumnIndexOutOfBounds {
+  public String get(int index) throws ColumnIndexOutOfBoundsException {
     try {
       return current[index];
-    } catch (IndexOutOfBoundsException exception) {
-      throw new ColumnIndexOutOfBounds(index, current.length);
+    } catch (ArrayIndexOutOfBoundsException exception) {
+      throw new ColumnIndexOutOfBoundsException(index, current.length);
     }
+  }
+
+  public String get(int index, String defaultValue) throws ColumnIndexOutOfBoundsException {
+    return isMissing(index) ? defaultValue : get(index);
   }
 
   public String get(String column) throws ColumnNotFoundException {
@@ -88,35 +92,63 @@ public class CSVReader implements Closeable {
     return current[columnLabelToIndex.get(column)];
   }
 
-  public int getInt(int index) throws ColumnIndexOutOfBounds {
+  public String get(String column, String defaultValue) throws ColumnNotFoundException {
+    return isMissing(column) ? defaultValue : get(column);
+  }
+
+  public int getInt(int index) throws ColumnIndexOutOfBoundsException {
     return Integer.parseInt(get(index));
+  }
+
+  public int getInt(int index, int defaultValue) throws ColumnIndexOutOfBoundsException {
+    return isMissing(index) ? defaultValue : getInt(index);
   }
 
   public int getInt(String column) throws ColumnNotFoundException {
     return Integer.parseInt(get(column));
   }
 
-  public double getDouble(int index) throws ColumnIndexOutOfBounds {
+  public int getInt(String column, int defaultValue) throws ColumnNotFoundException {
+    return isMissing(column) ? defaultValue : getInt(column);
+  }
+
+  public double getDouble(int index) throws ColumnIndexOutOfBoundsException {
     return Double.parseDouble(get(index));
+  }
+
+  public double getDouble(int index, double defaultValue) throws ColumnIndexOutOfBoundsException {
+    return isMissing(index) ? defaultValue : getDouble(index);
   }
 
   public double getDouble(String column) throws ColumnNotFoundException {
     return Double.parseDouble(get(column));
   }
 
-  public long getLong(int index) throws ColumnIndexOutOfBounds {
+  public double getDouble(String column, double defaultValue) throws ColumnNotFoundException {
+    return isMissing(column) ? defaultValue : getDouble(column);
+  }
+
+  public long getLong(int index) throws ColumnIndexOutOfBoundsException {
     return Long.parseLong(get(index));
+  }
+
+  public long getLong(int index, long defaultValue) throws ColumnIndexOutOfBoundsException {
+    return isMissing(index) ? defaultValue : getLong(index);
   }
 
   public long getLong(String column) throws ColumnNotFoundException {
     return Long.parseLong(get(column));
   }
 
-  public LocalTime getTime(int index) throws ColumnIndexOutOfBounds {
+  public long getLong(String column, long defaultValue) throws ColumnNotFoundException {
+    return isMissing(column) ? defaultValue : getLong(column);
+  }
+
+  public LocalTime getTime(int index) throws ColumnIndexOutOfBoundsException {
     return getTime(index, DEFAULT_TIME_FORMAT);
   }
 
-  public LocalTime getTime(int index, String format) throws ColumnIndexOutOfBounds {
+  public LocalTime getTime(int index, String format) throws ColumnIndexOutOfBoundsException {
     return LocalTime.parse(get(index), DateTimeFormatter.ofPattern(format));
   }
 
@@ -128,11 +160,11 @@ public class CSVReader implements Closeable {
     return LocalTime.parse(get(column), DateTimeFormatter.ofPattern(format));
   }
 
-  public LocalDate getDate(int index) throws ColumnIndexOutOfBounds {
+  public LocalDate getDate(int index) throws ColumnIndexOutOfBoundsException {
     return getDate(index, DEFAULT_DATE_FORMAT);
   }
 
-  public LocalDate getDate(int index, String format) throws ColumnIndexOutOfBounds {
+  public LocalDate getDate(int index, String format) throws ColumnIndexOutOfBoundsException {
     return LocalDate.parse(get(index), DateTimeFormatter.ofPattern(format));
   }
 
@@ -144,11 +176,12 @@ public class CSVReader implements Closeable {
     return LocalDate.parse(get(column), DateTimeFormatter.ofPattern(format));
   }
 
-  public LocalDateTime getDateTime(int index) throws ColumnIndexOutOfBounds {
+  public LocalDateTime getDateTime(int index) throws ColumnIndexOutOfBoundsException {
     return getDateTime(index, DEFAULT_DATE_TIME_FORMAT);
   }
 
-  public LocalDateTime getDateTime(int index, String format) throws ColumnIndexOutOfBounds {
+  public LocalDateTime getDateTime(int index, String format)
+      throws ColumnIndexOutOfBoundsException {
     return LocalDateTime.parse(get(index), DateTimeFormatter.ofPattern(format));
   }
 
@@ -169,19 +202,11 @@ public class CSVReader implements Closeable {
   }
 
   public boolean isMissing(int index) {
-    try {
-      return get(index).isEmpty();
-    } catch (ColumnIndexOutOfBounds exception) {
-      return true;
-    }
+    return index < 0 || index >= current.length || current[index].isEmpty();
   }
 
   public boolean isMissing(String column) {
-    try {
-      return get(column).isEmpty();
-    } catch (ColumnNotFoundException exception) {
-      return true;
-    }
+    return isMissing(columnLabelToIndex.getOrDefault(column, -1));
   }
 
   public boolean hasHeader() {

@@ -1,6 +1,6 @@
 package com.github.mrpumpking.lab6;
 
-import com.github.mrpumpking.lab6.exceptions.ColumnIndexOutOfBounds;
+import com.github.mrpumpking.lab6.exceptions.ColumnIndexOutOfBoundsException;
 import com.github.mrpumpking.lab6.exceptions.ColumnNotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,7 +85,7 @@ public class CSVReaderTest {
     int index = 10;
     int columnCount = 5;
 
-    assertThatExceptionOfType(ColumnIndexOutOfBounds.class)
+    assertThatExceptionOfType(ColumnIndexOutOfBoundsException.class)
         .isThrownBy(() -> reader.get(index))
         .withMessage(
             String.format(
@@ -104,7 +104,7 @@ public class CSVReaderTest {
 
   @Test
   void givenReader_whenInitialised_thenParseStringAsCSV()
-      throws IOException, ColumnIndexOutOfBounds {
+      throws IOException, ColumnIndexOutOfBoundsException {
     String text = "a,b,c\n123.4,567.8,91011.12";
     reader = new CSVReader(new StringReader(text), ",", true);
     reader.next();
@@ -117,7 +117,7 @@ public class CSVReaderTest {
 
   @Test
   void givenFileWithNoHeader_whenInitialise_thenParseCSV()
-      throws IOException, ColumnIndexOutOfBounds {
+      throws IOException, ColumnIndexOutOfBoundsException {
     String filePath = getClass().getResource("/without-header.csv").getPath();
     CSVReader reader = new CSVReader(filePath, ",", false);
 
