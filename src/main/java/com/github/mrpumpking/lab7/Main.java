@@ -16,7 +16,8 @@ public class Main {
 
     try {
       list.read(filePath);
-      list.list(System.out, 0, 10);
+      list.list(System.out, 0, 1);
+      System.out.println(list.get(0).children);
 
     } catch (IOException e) {
       e.printStackTrace();
