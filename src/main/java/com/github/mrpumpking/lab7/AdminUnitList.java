@@ -80,10 +80,10 @@ public class AdminUnitList {
     unit.area = reader.getDouble("area", 0);
     unit.density = reader.getDouble("density", -1);
 
-    bbox.xMin = reader.getDouble("x1", 0);
-    bbox.xMax = reader.getDouble("x3", 0);
-    bbox.yMin = reader.getDouble("y1", 0);
-    bbox.yMax = reader.getDouble("y2", 0);
+    bbox.xMin = reader.getDouble("x1", Double.NaN);
+    bbox.xMax = reader.getDouble("x3", Double.NaN);
+    bbox.yMin = reader.getDouble("y1", Double.NaN);
+    bbox.yMax = reader.getDouble("y3", Double.NaN);
 
     unit.bbox = bbox;
     return unit;
