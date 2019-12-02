@@ -15,6 +15,7 @@ public class AdminUnitList {
   private CSVReader reader;
   List<AdminUnit> units = new ArrayList<>();
   Map<Long, AdminUnit> idToAdminUnit = new HashMap<>();
+  AdminUnit root = new AdminUnit();
   Map<AdminUnit, Long> adminUnitToParentId = new HashMap<>();
   Map<Long, List<AdminUnit>> parentIdToChildren = new HashMap<>();
 
@@ -48,7 +49,72 @@ public class AdminUnitList {
     return result;
   }
 
+  /**
+   * @link http://www.mathcs.emory.edu/~cheung/Courses/554/Syllabus/3-index/R-tree.html
+   * @link https://blog.mapbox.com/a-dive-into-spatial-search-algorithms-ebd0c5e39d2a
+   */
+  AdminUnitList getNeighbours(AdminUnit unit, double maxDistance) {
+    AdminUnit current;
+    List<AdminUnit> potentialNeighbours = new ArrayList<>();
+
+    potentialNeighbours.add(root);
+
+    while (true) {
+      current = potentialNeighbours.remove(0);
+      if (current.adminLevel < unit.adminLevel) {
+        potentialNeighbours.addAll(current.children);
+      }
+
+      if (potentialNeighbours.isEmpty()) {
+        break;
+      }
+
+      if (potentialNeighbours.get(0).adminLevel >= unit.adminLevel) {
+        break;
+      }
+    }
+
+    return buildSubUnitList(filterNeighbours(potentialNeighbours, unit, maxDistance));
+  }
+
+  AdminUnitList getNeighboursLinear(AdminUnit needle, double maxDistance) {
+    return buildSubUnitList(filterNeighbours(units, needle, maxDistance));
+  }
+
+  private List<AdminUnit> filterNeighbours(List<AdminUnit> list, AdminUnit needle, double maxDist) {
+    return list.stream()
+        .filter(
+            unit ->
+                !unit.equals(needle)
+                    && ((unit.adminLevel >= 8 && unit.bbox.distanceTo(needle.bbox) < maxDist)
+                        || (unit.adminLevel < 8 && unit.bbox.intersects(needle.bbox))))
+        .collect(Collectors.toList());
+  }
+
+  private AdminUnitList buildSubUnitList(List<AdminUnit> list) {
+    AdminUnitList unitList = new AdminUnitList();
+
+    unitList.units = list;
+    unitList.idToAdminUnit =
+        idToAdminUnit.entrySet().stream()
+            .filter(x -> list.contains(x.getValue()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+    unitList.adminUnitToParentId =
+        adminUnitToParentId.entrySet().stream()
+            .filter(x -> list.contains(x.getKey()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+    unitList.adminUnitToParentId.put(root, -1L);
+    unitList.idToAdminUnit.put(-1L, root);
+    unitList.setUnitRelationValues();
+
+    return unitList;
+  }
+
   private void extractAllAdminUnits() throws IOException, ColumnNotFoundException {
+    idToAdminUnit.put(-1L, root);
+
     while (reader.next()) {
       AdminUnit unit = extractCurrentAdminUnit();
 
@@ -58,14 +124,12 @@ public class AdminUnitList {
       long parentId = reader.getLong("parent", -1);
       adminUnitToParentId.put(unit, parentId);
 
-      if (parentId != -1) {
-        if (parentIdToChildren.containsKey(parentId)) {
-          parentIdToChildren.get(parentId).add(unit);
-        } else {
-          List<AdminUnit> children = new ArrayList<>();
-          children.add(unit);
-          parentIdToChildren.put(parentId, children);
-        }
+      if (parentIdToChildren.containsKey(parentId)) {
+        parentIdToChildren.get(parentId).add(unit);
+      } else {
+        List<AdminUnit> children = new ArrayList<>();
+        children.add(unit);
+        parentIdToChildren.put(parentId, children);
       }
     }
   }
