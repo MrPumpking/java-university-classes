@@ -3,6 +3,7 @@ package com.github.mrpumpking.lab7;
 import com.github.mrpumpking.lab6.exceptions.ColumnNotFoundException;
 
 import java.io.IOException;
+import java.util.function.Predicate;
 
 public class Main {
 
@@ -44,6 +45,28 @@ public class Main {
 
     System.out.println();
     System.out.println("=== Results:");
-    list2.units.forEach(System.out::println);
+    list2.list(System.out);
+
+    System.out.println("=== Filtering");
+    Predicate<AdminUnit> predicateStartingWithK = item -> item.name.startsWith("K");
+    AdminUnitList unitsStartingWithK = list.filter(predicateStartingWithK);
+    AdminUnitList unitsNotStartingWithK = list.filter(predicateStartingWithK.negate());
+    AdminUnitList districts =
+        list.filter(
+            item ->
+                item.adminLevel == 6
+                    && item.parent != null
+                    && item.parent.name.equals("województwo małopolskie"));
+    //    unitsStartingWithK.list(System.out)
+
+    AdminUnitQuery query =
+        new AdminUnitQuery()
+            .selectFrom(list)
+            .where(item -> item.area > 1000)
+            .or(item -> item.name.startsWith("Sz"))
+            .sort((a, b) -> Double.compare(a.area, b.area))
+            .limit(100);
+
+    query.execute().list(System.out);
   }
 }

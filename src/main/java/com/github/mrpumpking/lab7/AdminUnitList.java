@@ -5,10 +5,8 @@ import com.github.mrpumpking.lab6.exceptions.ColumnNotFoundException;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class AdminUnitList {
@@ -81,20 +79,57 @@ public class AdminUnitList {
     return buildSubUnitList(filterNeighbours(units, needle, maxDistance));
   }
 
-  private List<AdminUnit> filterNeighbours(List<AdminUnit> list, AdminUnit needle, double maxDist) {
-    return list.stream()
-        .filter(
-            unit ->
-                !unit.equals(needle)
-                    && ((unit.adminLevel >= 8 && unit.bbox.distanceTo(needle.bbox) < maxDist)
-                        || (unit.adminLevel < 8 && unit.bbox.intersects(needle.bbox))))
-        .collect(Collectors.toList());
+  AdminUnitList sortInplaceByName() {
+    units.sort(new AdminUnitNameComparator());
+    return this;
   }
 
-  private AdminUnitList buildSubUnitList(List<AdminUnit> list) {
+  AdminUnitList sortInplaceByArea() {
+    units.sort(
+        new Comparator<AdminUnit>() {
+          @Override
+          public int compare(AdminUnit a, AdminUnit b) {
+            return Double.compare(a.area, b.area);
+          }
+        });
+    return this;
+  }
+
+  AdminUnitList sortInplaceByPopulation() {
+    units.sort((a, b) -> Double.compare(a.population, b.population));
+    return this;
+  }
+
+  AdminUnitList sortInplace(Comparator<AdminUnit> comparator) {
+    units.sort(comparator);
+    return this;
+  }
+
+  AdminUnitList sort(Comparator<AdminUnit> comparator) {
+    AdminUnitList copy = copyOf();
+    copy.sortInplace(comparator);
+    return copy;
+  }
+
+  AdminUnitList filter(Predicate<AdminUnit> predicate) {
+    List<AdminUnit> filtered = units.stream().filter(predicate).collect(Collectors.toList());
+    return buildSubUnitList(filtered);
+  }
+
+  AdminUnitList filter(Predicate<AdminUnit> predicate, int offset, int limit) {
+    List<AdminUnit> filtered =
+        units.stream().skip(offset).limit(limit).filter(predicate).collect(Collectors.toList());
+    return buildSubUnitList(filtered);
+  }
+
+  AdminUnitList copyOf() {
+    return buildSubUnitList(units);
+  }
+
+  AdminUnitList buildSubUnitList(List<AdminUnit> list) {
     AdminUnitList unitList = new AdminUnitList();
 
-    unitList.units = list;
+    unitList.units = new ArrayList<>(list);
     unitList.idToAdminUnit =
         idToAdminUnit.entrySet().stream()
             .filter(x -> list.contains(x.getValue()))
@@ -110,6 +145,16 @@ public class AdminUnitList {
     unitList.setUnitRelationValues();
 
     return unitList;
+  }
+
+  private List<AdminUnit> filterNeighbours(List<AdminUnit> list, AdminUnit needle, double maxDist) {
+    return list.stream()
+        .filter(
+            unit ->
+                !unit.equals(needle)
+                    && ((unit.adminLevel >= 8 && unit.bbox.distanceTo(needle.bbox) < maxDist)
+                        || (unit.adminLevel < 8 && unit.bbox.intersects(needle.bbox))))
+        .collect(Collectors.toList());
   }
 
   private void extractAllAdminUnits() throws IOException, ColumnNotFoundException {
