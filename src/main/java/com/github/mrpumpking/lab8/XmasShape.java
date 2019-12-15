@@ -34,4 +34,10 @@ public interface XmasShape {
     // Restore original transform
     g2d.setTransform(saveAT);
   }
+
+  public static void setGradientFill(Graphics2D g2d, int height, Color color1, Color color2) {
+    g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+    GradientPaint gp = new GradientPaint(0, 0, color1, 0, height, color2);
+    g2d.setPaint(gp);
+  }
 }

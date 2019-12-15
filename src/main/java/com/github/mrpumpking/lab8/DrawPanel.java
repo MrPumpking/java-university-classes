@@ -29,13 +29,7 @@ public class DrawPanel extends JPanel {
   }
 
   private void setBackgroundColor(Graphics2D g2d) {
-    g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-    int w = getWidth();
-    int h = getHeight();
-    Color color1 = Color.decode("#462255");
-    Color color2 = Color.decode("#2B193D");
-    GradientPaint gp = new GradientPaint(0, 0, color1, 0, h, color2);
-    g2d.setPaint(gp);
-    g2d.fillRect(0, 0, w, h);
+    XmasShape.setGradientFill(g2d, getHeight(), Color.decode("#462255"), Color.decode("#2B193D"));
+    g2d.fillRect(0, 0, getWidth(), getHeight());
   }
 }
