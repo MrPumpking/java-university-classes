@@ -4,14 +4,19 @@ import javax.swing.*;
 
 public class Main {
 
+  private static final int WIDTH = 1600;
+  private static final int HEIGHT = 900;
+
   public static void main(String[] args) {
-    // write your code here
-    JFrame frame = new JFrame("Choinka");
-    frame.setContentPane(new DrawPanel());
-    frame.setSize(1000, 700);
-    frame.setLocationRelativeTo(null);
-    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    frame.setResizable(true);
-    frame.setVisible(true);
+    SwingUtilities.invokeLater(
+        () -> {
+          JFrame frame = new JFrame("Choinka");
+          frame.setContentPane(new DrawPanel(WIDTH, HEIGHT));
+          frame.setSize(WIDTH, HEIGHT);
+          frame.setLocationRelativeTo(null);
+          frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+          frame.setResizable(true);
+          frame.setVisible(true);
+        });
   }
 }
