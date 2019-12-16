@@ -10,17 +10,25 @@ public class XmasTreeBranch implements XmasShape {
   private double xOffset;
   private double yOffset;
 
-  static final int BASE_WIDTH = 160;
-  static final int BASE_HEIGHT = 100;
+  public static final int BASE_WIDTH = 160;
+  public static final int BASE_HEIGHT = 100;
 
   private static final int[] X_POINTS = new int[] {0, BASE_WIDTH / 2, BASE_WIDTH};
   private static final int[] Y_POINTS = new int[] {BASE_HEIGHT, 0, BASE_HEIGHT};
 
-  public XmasTreeBranch(Color color, int scale, double xOffset, double yOffset) {
+  public XmasTreeBranch(Color color, int scale) {
     this.color = color;
     this.scale = scale;
-    this.xOffset = xOffset;
-    this.yOffset = yOffset;
+    this.xOffset = -BASE_WIDTH / 2D * scale;
+    this.yOffset = BASE_HEIGHT * (scale - 2);
+  }
+
+  public double getYOffset() {
+    return yOffset;
+  }
+
+  public int getHeight() {
+    return BASE_HEIGHT * scale;
   }
 
   @Override

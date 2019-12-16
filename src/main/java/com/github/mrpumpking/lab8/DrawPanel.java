@@ -1,6 +1,8 @@
 package com.github.mrpumpking.lab8;
 
-import com.github.mrpumpking.lab8.tree.XmasTree;
+import com.github.mrpumpking.lab8.decorations.XmasBubble;
+import com.github.mrpumpking.lab8.tree.XmasTreeBranch;
+import com.github.mrpumpking.lab8.tree.XmasTreeTrunk;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,15 +10,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DrawPanel extends JPanel {
-  private int width;
-  private int height;
+  private int totalBranchHeight;
   private List<XmasShape> shapes;
 
-  public DrawPanel(int width, int height) {
-    this.width = width;
-    this.height = height;
+  private int trunkWidth = 100;
+  private int trunkHeight = 100;
+
+  public DrawPanel() {
     this.shapes = new ArrayList<>();
-    shapes.add(new XmasTree(4, width, height));
+    //    shapes.add(new XmasTree(4, width, height));
+
+    int treeHeight = 4;
+    Color branchColor = Color.decode("#338266");
+
+    String[] colors = new String[] {"#F79F79", "#EF767A", "#63ADF2", "#FAB3A9"};
+
+    for (int i = treeHeight; i > 0; i--) {
+      int scale = i;
+
+      XmasTreeBranch branch = new XmasTreeBranch(branchColor, i + 1);
+      shapes.add(branch);
+
+      for (int j = -XmasTreeBranch.BASE_WIDTH * scale / 2;
+          j < XmasTreeBranch.BASE_WIDTH * scale / 2;
+          j += XmasTreeBranch.BASE_WIDTH / 4) {
+        shapes.add(
+            new XmasBubble(j + 20, branch.getYOffset() + 70, 1, Color.decode(colors[i - 1])));
+      }
+
+      totalBranchHeight += branch.getHeight() - branch.getYOffset();
+      branchColor = branchColor.brighter();
+    }
+
+    shapes.add(new XmasTreeTrunk(trunkWidth, trunkHeight, -trunkWidth / 2D, totalBranchHeight));
   }
 
   @Override
@@ -25,6 +51,7 @@ public class DrawPanel extends JPanel {
     Graphics2D g2d = (Graphics2D) g;
 
     setBackgroundColor(g2d);
+    g2d.translate(getWidth() / 2, getHeight() - totalBranchHeight - trunkHeight);
     shapes.forEach(shape -> shape.draw(g2d));
   }
 
