@@ -16,7 +16,7 @@ public class ExecutionTimer {
     start = end = 0;
   }
 
-  long getExecutionTime() {
+  public long getExecutionTime() {
     return end - start;
   }
 }

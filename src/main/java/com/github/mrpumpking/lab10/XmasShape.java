@@ -1,4 +1,4 @@
-package com.github.mrpumpking.lab8;
+package com.github.mrpumpking.lab10;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

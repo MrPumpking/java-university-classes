@@ -1,8 +1,8 @@
-package com.github.mrpumpking.lab8;
+package com.github.mrpumpking.lab10;
 
-import com.github.mrpumpking.lab8.decorations.XmasBubble;
-import com.github.mrpumpking.lab8.tree.XmasTreeBranch;
-import com.github.mrpumpking.lab8.tree.XmasTreeTrunk;
+import com.github.mrpumpking.lab10.decorations.XmasBubble;
+import com.github.mrpumpking.lab10.tree.XmasTreeBranch;
+import com.github.mrpumpking.lab10.tree.XmasTreeTrunk;
 
 import javax.swing.*;
 import java.awt.*;

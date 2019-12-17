@@ -1,6 +1,6 @@
-package com.github.mrpumpking.lab8.decorations;
+package com.github.mrpumpking.lab10.decorations;
 
-import com.github.mrpumpking.lab8.XmasShape;
+import com.github.mrpumpking.lab10.XmasShape;
 
 import java.awt.*;
 

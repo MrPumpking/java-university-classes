@@ -1,6 +1,6 @@
-package com.github.mrpumpking.lab8.tree;
+package com.github.mrpumpking.lab10.tree;
 
-import com.github.mrpumpking.lab8.XmasShape;
+import com.github.mrpumpking.lab10.XmasShape;
 
 import java.awt.*;
 
