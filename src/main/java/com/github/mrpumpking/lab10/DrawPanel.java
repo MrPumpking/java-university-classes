@@ -1,6 +1,8 @@
 package com.github.mrpumpking.lab10;
 
 import com.github.mrpumpking.lab10.decorations.XmasBubble;
+import com.github.mrpumpking.lab10.decorations.XmasGift;
+import com.github.mrpumpking.lab10.decorations.XmasStar;
 import com.github.mrpumpking.lab10.tree.XmasTreeBranch;
 import com.github.mrpumpking.lab10.tree.XmasTreeTrunk;
 
@@ -18,7 +20,6 @@ public class DrawPanel extends JPanel {
 
   public DrawPanel() {
     this.shapes = new ArrayList<>();
-    //    shapes.add(new XmasTree(4, width, height));
 
     int treeHeight = 4;
     Color branchColor = Color.decode("#338266");
@@ -31,11 +32,18 @@ public class DrawPanel extends JPanel {
       XmasTreeBranch branch = new XmasTreeBranch(branchColor, i + 1);
       shapes.add(branch);
 
-      for (int j = -XmasTreeBranch.BASE_WIDTH * scale / 2;
-          j < XmasTreeBranch.BASE_WIDTH * scale / 2;
-          j += XmasTreeBranch.BASE_WIDTH / 4) {
+      int halfBranchWidth = branch.getWidth() / 2;
+      int bubbleSpacing = 40;
+
+      for (int x = -halfBranchWidth + bubbleSpacing * 2 - 30;
+          x < halfBranchWidth / 2 + bubbleSpacing * 2 - 30;
+          x += XmasBubble.BASE_WIDTH + bubbleSpacing) {
         shapes.add(
-            new XmasBubble(j + 20, branch.getYOffset() + 70, 1, Color.decode(colors[i - 1])));
+            new XmasBubble(
+                x,
+                branch.getYOffset() + branch.getHeight() - XmasBubble.BASE_HEIGHT - 20,
+                1,
+                Color.decode(colors[i - 1])));
       }
 
       totalBranchHeight += branch.getHeight() - branch.getYOffset();
@@ -43,6 +51,20 @@ public class DrawPanel extends JPanel {
     }
 
     shapes.add(new XmasTreeTrunk(trunkWidth, trunkHeight, -trunkWidth / 2D, totalBranchHeight));
+    shapes.add(
+        new XmasGift(
+            -400, totalBranchHeight + trunkHeight - 150, 250, 150, 1, Color.decode("#D8973C")));
+    shapes.add(
+        new XmasGift(
+            -200, totalBranchHeight + trunkHeight - 100, 100, 100, 1, Color.decode(colors[2])));
+    shapes.add(
+        new XmasGift(
+            200, totalBranchHeight + trunkHeight - 200, 200, 200, 1, Color.decode(colors[1])));
+    shapes.add(
+        new XmasGift(
+            100, totalBranchHeight + trunkHeight - 100, 150, 100, 1, Color.decode(colors[0])));
+
+    shapes.add(new XmasStar(0, -15, 25, Color.decode("#D8973C")));
   }
 
   @Override

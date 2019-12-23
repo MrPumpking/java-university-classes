@@ -10,8 +10,8 @@ public class XmasBubble implements XmasShape {
   private double scale;
   private Color color;
 
-  private static final int WIDTH = 25;
-  private static final int HEIGHT = 25;
+  public static final int BASE_WIDTH = 25;
+  public static final int BASE_HEIGHT = 25;
 
   public XmasBubble(double x, double y, double scale, Color color) {
     this.x = x;
@@ -28,8 +28,7 @@ public class XmasBubble implements XmasShape {
 
   @Override
   public void render(Graphics2D g2d) {
-    XmasShape.setGradientFill(g2d, HEIGHT, color, color.brighter());
-    //    g2d.setColor(color);
-    g2d.fillOval((int) x, (int) y, WIDTH, HEIGHT);
+    XmasShape.setGradientFill(g2d, BASE_HEIGHT, color.brighter(), color);
+    g2d.fillOval(0, 0, BASE_WIDTH, BASE_HEIGHT);
   }
 }

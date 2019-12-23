@@ -31,6 +31,10 @@ public class XmasTreeBranch implements XmasShape {
     return BASE_HEIGHT * scale;
   }
 
+  public int getWidth() {
+    return BASE_WIDTH * scale;
+  }
+
   @Override
   public void transform(Graphics2D g2d) {
     g2d.translate(xOffset, yOffset);
