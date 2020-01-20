@@ -52,11 +52,11 @@ public class ElevatorStops {
     return 0;
   }
 
-  boolean whileMovingDownSholudStopAt(int floor) {
+  boolean whileMovingDownShouldStopAt(int floor) {
     return stopsDown[floor];
   }
 
-  boolean whileMovingUpSholudStopAt(int floor) {
+  boolean whileMovingUpShouldStopAt(int floor) {
     return stopsUp[floor];
   }
 

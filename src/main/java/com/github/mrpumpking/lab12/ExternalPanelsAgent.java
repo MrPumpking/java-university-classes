@@ -4,7 +4,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class ExternalPanelsAgent extends Thread {
-
   private final ElevatorCar elevatorCar;
 
   static class ExternalCall {
@@ -25,14 +24,20 @@ public class ExternalPanelsAgent extends Thread {
 
   public void run() {
     for (; ; ) {
-      ExternalCall ec = ec = input.take();
+      ExternalCall ec = null;
+      try {
+        ec = input.take();
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+
       // ignorujemy wezwanie na piętro, na którym winda się znajduje
       if (ec.atFloor == elevatorCar.getFloor()) continue;
       // dodajemy do jednej z tablic zgłoszeń
       if (ec.directionUp) {
-        ElevatorStops.get().setLiftStopUp(ec.atFloor);
+        ElevatorStops.getInstance().setLiftStopUp(ec.atFloor);
       } else {
-        ElevatorStops.get().setLiftStopDown(ec.atFloor);
+        ElevatorStops.getInstance().setLiftStopDown(ec.atFloor);
       }
     }
   }
