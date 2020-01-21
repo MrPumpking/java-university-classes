@@ -9,21 +9,48 @@ import java.util.*;
 
 public class WordCount {
   private String text;
-  private Map<Integer, Set<String>> words;
+  private Map<Integer, Set<String>> lengthToWords;
 
   public static void main(String[] args) {
     new WordCount();
   }
 
   public WordCount() {
-    words = new TreeMap<>();
+    lengthToWords = new TreeMap<>();
     text = readFile(getClass().getResource("/w-pustyni.txt").getPath(), Charset.forName("cp1250"));
 
     processWords();
-    printShortestWords();
+    printStatistics();
   }
 
-  private void printShortestWords() {}
+  private void printStatistics() {
+    int i = 0;
+
+    int longestLength = 0;
+    int shortestLength = 0;
+    Set<String> shortest = null;
+    Set<String> longest = null;
+
+    for (Map.Entry<Integer, Set<String>> entry : lengthToWords.entrySet()) {
+      if (i == 0) {
+        shortest = entry.getValue();
+        shortestLength = entry.getKey();
+      }
+
+      if (i == lengthToWords.size() - 1) {
+        longest = entry.getValue();
+        longestLength = entry.getKey();
+      }
+
+      i++;
+    }
+
+    System.out.println("Długość najkrótszych słów: " + shortestLength);
+    System.out.println(shortest);
+
+    System.out.println("Długość najdłuższych słów: " + longestLength);
+    System.out.println(longest);
+  }
 
   private void processWords() {
     String[] wordArray = text.split("[\\s|\\r|\\,|\\.|\\-|\\!|\\—|\\?]+");
@@ -33,12 +60,12 @@ public class WordCount {
             word -> {
               int length = word.length();
 
-              if (words.containsKey(length)) {
-                words.get(length).add(word);
+              if (lengthToWords.containsKey(length)) {
+                lengthToWords.get(length).add(word);
               } else {
                 Set<String> wordSet = new HashSet<>();
                 wordSet.add(word);
-                words.put(length, wordSet);
+                lengthToWords.put(length, wordSet);
               }
             });
   }

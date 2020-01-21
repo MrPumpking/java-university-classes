@@ -4,9 +4,7 @@ import com.github.mrpumpking.lab6.CSVReader;
 import com.github.mrpumpking.lab6.exceptions.ColumnNotFoundException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class BookList {
   private List<Book> books;
@@ -20,20 +18,29 @@ public class BookList {
       this.reader = new CSVReader(filePath, ";", true);
       readBooks();
 
-      //      ex1();
-      ex2();
+      exA();
+      exB();
+      exC();
+      exD();
 
     } catch (IOException | ColumnNotFoundException e) {
       e.printStackTrace();
     }
   }
 
-  //
-  private void ex1() {
+  /**
+   * Wypisz wszystkie książki, których autorem lub współautorem był mężczyzna o imieniu Marek.
+   * Wypisując informacje o książce podaj co najmniej: autora, tytuł, wydawnictwo i rok wydania
+   */
+  private void exA() {
     books.stream().filter(book -> book.author.contains("Marek")).forEach(System.out::println);
   }
 
-  private void ex2() {
+  /**
+   * Wypisz wszystkie książki wydane przez Wydawnictwo Naukowe PWN z kategorii Informatyka
+   * posortowane według roku wydania
+   */
+  private void exB() {
     books.stream()
         .filter(
             book ->
@@ -41,6 +48,21 @@ public class BookList {
                     && book.category.equals("Informatyka"))
         .sorted(Comparator.comparingInt(Book::getYear))
         .forEachOrdered(System.out::println);
+  }
+
+  /** Podaj ile książek wydano w kolejnych latach (policz książki z kolejnych lat i wypisz) */
+  private void exC() {
+    Map<Integer, Integer> yearBookCount = new HashMap<>();
+    books.forEach(book -> yearBookCount.compute(book.year, (k, v) -> (v == null) ? 1 : v + 1));
+    System.out.println(yearBookCount);
+  }
+
+  /** Podaj ile książek zostało wydane przez poszczególne wydawnictwa */
+  private void exD() {
+    Map<String, Integer> publisherBookCount = new HashMap<>();
+    books.forEach(
+        book -> publisherBookCount.compute(book.publisher, (k, v) -> (v == null) ? 1 : v + 1));
+    System.out.println(publisherBookCount);
   }
 
   private void readBooks() throws IOException, ColumnNotFoundException {
