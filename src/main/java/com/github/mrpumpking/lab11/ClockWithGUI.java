@@ -37,6 +37,8 @@ public class ClockWithGUI extends JPanel {
     int minuteHandLength = (int) (CLOCK_FACE_SIZE * 0.35);
 
     Graphics2D g2d = (Graphics2D) g;
+    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
     g2d.translate(getWidth() / 2, getHeight() / 2);
     Point2D src = new Point2D.Float(0, -numberDistance);
 

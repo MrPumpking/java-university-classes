@@ -160,6 +160,13 @@ public class AdminUnitList {
   private void extractAllAdminUnits() throws IOException, ColumnNotFoundException {
     idToAdminUnit.put(-1L, root);
 
+    units.stream()
+        .sorted(
+            Comparator.comparing((AdminUnit unit) -> unit.name)
+                .thenComparing(unit -> unit.adminLevel)
+                .thenComparing(unit -> unit.density))
+        .collect(Collectors.toList());
+
     while (reader.next()) {
       AdminUnit unit = extractCurrentAdminUnit();
 
