@@ -1,6 +1,5 @@
 package com.github.mrpumpking.lab14;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -9,7 +8,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class BouncingBallsPanel extends JPanel implements ComponentListener {
+/**
+ * Trzeba było zmienić z JPanel na Panel, w Swingu metoda update nigdy się nie wywołuje
+ *
+ * @link https://www.oracle.com/technetwork/java/painting-140037.html
+ *     <p>For Swing components, paint() is always invoked as a result of both system-triggered and
+ *     app-triggered paint requests; update() is never invoked on Swing components.
+ */
+public class BouncingBallsPanel extends Panel implements ComponentListener {
   private Image bufferImage;
   private long lastPaint = 0;
   private boolean initialised = false;
@@ -17,11 +23,10 @@ public class BouncingBallsPanel extends JPanel implements ComponentListener {
   private List<Ball> balls = new ArrayList<>();
 
   private final AtomicBoolean paused = new AtomicBoolean(true);
-  private static final int FRAME_RATE = 60;
+  private static final int FRAME_RATE = 1000 / 70;
   private static final int SLEEP_TIME = 1;
 
   BouncingBallsPanel() {
-    setBorder(BorderFactory.createStrokeBorder(new BasicStroke(3.0f)));
     addComponentListener(this);
     new AnimationThread().start();
   }
@@ -64,7 +69,7 @@ public class BouncingBallsPanel extends JPanel implements ComponentListener {
     Graphics bufferGraphics = bufferImage.getGraphics();
     bufferGraphics.setColor(Color.LIGHT_GRAY);
     bufferGraphics.fillRect(0, 0, dim.width, dim.height);
-    super.paint(bufferGraphics);
+    paint(bufferGraphics);
     g.drawImage(bufferImage, 0, 0, this);
     lastPaint = System.currentTimeMillis();
   }
@@ -166,7 +171,7 @@ public class BouncingBallsPanel extends JPanel implements ComponentListener {
     int x = pickRandomPointBetween(Ball.BALL_SIZE * 2, getWidth() - Ball.BALL_SIZE * 2);
     int y = pickRandomPointBetween(Ball.BALL_SIZE * 2, getHeight() - Ball.BALL_SIZE * 2);
 
-    int acceleration = random.ints(1, 1, 3).findFirst().orElse(1);
+    double acceleration = random.doubles(1, 1, 1.5).findFirst().orElse(1);
 
     balls.add(new Ball(x, y, vx, vy, acceleration, new Color((int) (Math.random() * 0x1000000))));
   }
@@ -204,7 +209,7 @@ public class BouncingBallsPanel extends JPanel implements ComponentListener {
     private Rectangle bbox;
     public static int BALL_SIZE = 10;
 
-    public Ball(int x, int y, int vx, int vy, int acceleration, Color color) {
+    public Ball(int x, int y, int vx, int vy, double acceleration, Color color) {
       this.x = x;
       this.y = y;
       this.vx = vx;
